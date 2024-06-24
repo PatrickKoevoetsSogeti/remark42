@@ -104,6 +104,7 @@ type ServerCommand struct {
 		Github    AuthGroup  `group:"github" namespace:"github" env-namespace:"GITHUB" description:"Github OAuth"`
 		Facebook  AuthGroup  `group:"facebook" namespace:"facebook" env-namespace:"FACEBOOK" description:"Facebook OAuth"`
 		Microsoft AuthGroup  `group:"microsoft" namespace:"microsoft" env-namespace:"MICROSOFT" description:"Microsoft OAuth"`
+		Entraid   AuthGroup  `group:"entraid" namespace:"entraid" env-namespace:"ENTRAID" description:"Entra-ID OAuth"`
 		Yandex    AuthGroup  `group:"yandex" namespace:"yandex" env-namespace:"YANDEX" description:"Yandex OAuth"`
 		Twitter   AuthGroup  `group:"twitter" namespace:"twitter" env-namespace:"TWITTER" description:"Twitter OAuth"`
 		Patreon   AuthGroup  `group:"patreon" namespace:"patreon" env-namespace:"PATREON" description:"Patreon OAuth"`
@@ -147,8 +148,9 @@ type AppleGroup struct {
 
 // AuthGroup defines options group for auth params
 type AuthGroup struct {
-	CID  string `long:"cid" env:"CID" description:"OAuth client ID"`
-	CSEC string `long:"csec" env:"CSEC" description:"OAuth client secret"`
+	CID     string `long:"cid" env:"CID" description:"OAuth client ID"`
+	CSEC    string `long:"csec" env:"CSEC" description:"OAuth client secret"`
+	CTENANT string `long:"ctenant" env:"CTENANT" description:"OAuth tenant ID"`
 }
 
 // StoreGroup defines options group for store params
@@ -320,6 +322,7 @@ func (s *ServerCommand) Execute(_ []string) error {
 		"AUTH_TWITTER_CSEC",
 		"AUTH_YANDEX_CSEC",
 		"AUTH_PATREON_CSEC",
+		"AUTH_ENTRAID_CSEC",
 		"TELEGRAM_TOKEN",
 		"SMTP_PASSWORD",
 		"ADMIN_PASSWD",
@@ -918,31 +921,35 @@ func (s *ServerCommand) addAuthProviders(authenticator *auth.Service) error {
 		providersCount++
 	}
 	if s.Auth.Google.CID != "" && s.Auth.Google.CSEC != "" {
-		authenticator.AddProvider("google", s.Auth.Google.CID, s.Auth.Google.CSEC)
+		authenticator.AddProvider("google", s.Auth.Google.CID, s.Auth.Google.CSEC, "")
 		providersCount++
 	}
 	if s.Auth.Github.CID != "" && s.Auth.Github.CSEC != "" {
-		authenticator.AddProvider("github", s.Auth.Github.CID, s.Auth.Github.CSEC)
+		authenticator.AddProvider("github", s.Auth.Github.CID, s.Auth.Github.CSEC, "")
 		providersCount++
 	}
 	if s.Auth.Facebook.CID != "" && s.Auth.Facebook.CSEC != "" {
-		authenticator.AddProvider("facebook", s.Auth.Facebook.CID, s.Auth.Facebook.CSEC)
+		authenticator.AddProvider("facebook", s.Auth.Facebook.CID, s.Auth.Facebook.CSEC, "")
 		providersCount++
 	}
 	if s.Auth.Microsoft.CID != "" && s.Auth.Microsoft.CSEC != "" {
-		authenticator.AddProvider("microsoft", s.Auth.Microsoft.CID, s.Auth.Microsoft.CSEC)
+		authenticator.AddProvider("microsoft", s.Auth.Microsoft.CID, s.Auth.Microsoft.CSEC, "")
+		providersCount++
+	}
+	if s.Auth.Entraid.CID != "" && s.Auth.Entraid.CSEC != "" {
+		authenticator.AddProvider("entraid", s.Auth.Entraid.CID, s.Auth.Entraid.CSEC, s.Auth.Entraid.CTENANT)
 		providersCount++
 	}
 	if s.Auth.Yandex.CID != "" && s.Auth.Yandex.CSEC != "" {
-		authenticator.AddProvider("yandex", s.Auth.Yandex.CID, s.Auth.Yandex.CSEC)
+		authenticator.AddProvider("yandex", s.Auth.Yandex.CID, s.Auth.Yandex.CSEC, "")
 		providersCount++
 	}
 	if s.Auth.Twitter.CID != "" && s.Auth.Twitter.CSEC != "" {
-		authenticator.AddProvider("twitter", s.Auth.Twitter.CID, s.Auth.Twitter.CSEC)
+		authenticator.AddProvider("twitter", s.Auth.Twitter.CID, s.Auth.Twitter.CSEC, "")
 		providersCount++
 	}
 	if s.Auth.Patreon.CID != "" && s.Auth.Patreon.CSEC != "" {
-		authenticator.AddProvider("patreon", s.Auth.Patreon.CID, s.Auth.Patreon.CSEC)
+		authenticator.AddProvider("patreon", s.Auth.Patreon.CID, s.Auth.Patreon.CSEC, "")
 		providersCount++
 	}
 
