@@ -38,6 +38,7 @@ type Params struct {
 	JwtService     TokenService
 	Cid            string
 	Csecret        string
+	Ctenant        string
 	Issuer         string
 	AvatarSaver    AvatarSaver
 	UserAttributes UserAttributes

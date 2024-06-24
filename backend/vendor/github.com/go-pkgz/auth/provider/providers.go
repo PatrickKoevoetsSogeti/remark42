@@ -213,6 +213,29 @@ func NewMicrosoft(p Params) Oauth2Handler {
 	})
 }
 
+// NewEntraID makes EntraID azure oauth2 provider
+func NewEntraID(p Params) Oauth2Handler {
+	return initOauth2Handler(p, Oauth2Handler{
+		name:     "entraid",
+		endpoint: microsoft.AzureADEndpoint(p.Ctenant),
+		scopes:   []string{"User.Read"},
+		infoURL:  "https://graph.microsoft.com/v1.0/me",
+		// non-beta doesn't provide photo for consumers yet
+		// see https://github.com/microsoftgraph/microsoft-graph-docs/issues/3990
+		mapUser: func(data UserData, _ []byte) token.User {
+			userInfo := token.User{
+				ID:      "microsoft_" + token.HashID(sha1.New(), data.Value("id")),
+				Name:    data.Value("displayName"),
+				Picture: "https://graph.microsoft.com/beta/me/photo/$value",
+			}
+			for k, v := range p.UserAttributes {
+				userInfo.SetStrAttr(v, data.Value(k))
+			}
+			return userInfo
+		},
+	})
+}
+
 // NewPatreon makes patreon oauth2 provider
 func NewPatreon(p Params) Oauth2Handler {
 	type uinfo struct {

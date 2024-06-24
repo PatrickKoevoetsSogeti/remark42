@@ -265,7 +265,7 @@ func (s *Service) addProvider(name string, p provider.Params) {
 }
 
 // AddProvider adds provider for given name
-func (s *Service) AddProvider(name, cid, csecret string) {
+func (s *Service) AddProvider(name, cid, csecret string, ctenant string) {
 
 	p := provider.Params{
 		URL:            s.opts.URL,
@@ -274,6 +274,7 @@ func (s *Service) AddProvider(name, cid, csecret string) {
 		AvatarSaver:    s.avatarProxy,
 		Cid:            cid,
 		Csecret:        csecret,
+		Ctenant:        ctenant,
 		L:              s.logger,
 		UserAttributes: map[string]string{},
 	}
